@@ -1,33 +1,19 @@
 import './pages/index.css'
-import { initialCards } from './cards.js';
+import { initialCards } from './scripts/cards.js';
+import { createCardElement, handleDeleteCard } from './scripts/components/card.js';
+import { openModal, closeModal, closeModalOverlay } from './scripts/components/modal.js';
 
-// Темплейт карточки
-const cardTemplate = document.querySelector("#card-template").content.querySelector(".places__item");
-
-// DOM узлы
 const placesWrap = document.querySelector(".places__list");
+const addNewCardButton = document.querySelector('.profile__add-button');
+const modalWindow = document.querySelector('.popup_type_new-card');
+const closeModalButtons = document.querySelectorAll('.popup__close');
+const closeModalButton2 = closeModalButtons[1];
 
-// Функция создания карточки
-function createCardElement(data, onDelete) {
-  const cardElement = cardTemplate.cloneNode(true);
-  const deleteButton = cardElement.querySelector(".card__delete-button");
-
-  const cardImage = cardElement.querySelector(".card__image");
-  cardImage.src = data.link;
-  cardImage.alt = data.name;
-
-  cardElement.querySelector(".card__title").textContent = data.name;
-
-  deleteButton.addEventListener("click", onDelete);
-  return cardElement;
-}
-
-// Функция удаления карточки
-function handleDeleteCard(evt) {
-  evt.target.closest(".card").remove();
-}
-
-// Вывести карточки на страницу
 initialCards.forEach((data) => {
   placesWrap.append(createCardElement(data, handleDeleteCard));
 });
+
+addNewCardButton.addEventListener('click', () => openModal(modalWindow));
+closeModalButton2.addEventListener('click', () => closeModal(modalWindow));
+document.addEventListener('click', (event) => closeModalOverlay(event, modalWindow));
+

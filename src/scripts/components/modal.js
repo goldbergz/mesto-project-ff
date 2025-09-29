@@ -14,11 +14,13 @@ export function openModal(modal) {
 export function closeModal(modal) {
   if (!modal) return;
   modal.classList.remove('popup_is-opened');
-  document.addEventListener('keydown', onEsc);
+
 }
 
-export function closeModalOverlay(event, modal) {
-  if (event.target === modal) {
-    modal.classList.remove('popup_is-opened');
+export function closeModalOverlay(event, modals) {
+  for (const modal of modals) {
+    if (event.target === modal) {
+      modal.classList.remove('popup_is-opened');
+    }
   }
 }

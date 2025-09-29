@@ -1,5 +1,5 @@
 import { profileTitle, profileDescription, modalEditProfiledWindow, placesWrap, modalnewCardWindow } from '../../index.js';
-import { createCardElement, handleDeleteCard } from './card.js';
+import { createCardElement, handleDeleteCard, handleLikeCard } from './card.js';
 
 export const formEditProfileElement = document.forms['edit-profile'];
 export const nameInput = formEditProfileElement.elements.name;
@@ -47,7 +47,7 @@ function handleEditProfileFormSubmit(event) {
 
 function handleNewCardFormSubmit(event) {
   event.preventDefault();
-  placesWrap.prepend(createCardElement([nameNewCardInput, linkNewCardInput], handleDeleteCard));
+  placesWrap.prepend(createCardElement([nameNewCardInput, linkNewCardInput], handleDeleteCard, handleLikeCard));
   closeModal(modalnewCardWindow);
 }
 

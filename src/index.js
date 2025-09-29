@@ -1,6 +1,6 @@
 import './pages/index.css'
 import { initialCards } from './scripts/cards.js';
-import { createCardElement, handleDeleteCard } from './scripts/components/card.js';
+import { createCardElement, handleDeleteCard, handleLikeCard } from './scripts/components/card.js';
 import { openModal, closeModal, closeModalOverlay, formEditProfileElement, nameInput, jobInput } from './scripts/components/modal.js';
 
 export const profileTitle = document.querySelector('.profile__title');
@@ -22,7 +22,7 @@ const closeModalButton3 = closeModalButtons[2];
 
 
 initialCards.forEach((data) => {
-  placesWrap.append(createCardElement(data, handleDeleteCard));
+  placesWrap.append(createCardElement(data, handleDeleteCard, handleLikeCard));
 });
 
 addNewCardButton.addEventListener('click', () => openModal(modalnewCardWindow));

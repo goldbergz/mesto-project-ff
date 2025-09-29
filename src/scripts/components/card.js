@@ -4,9 +4,10 @@ import { openModal } from './modal.js';
 const cardTemplate = document.querySelector("#card-template").content.querySelector(".places__item");
 const modalImage = document.querySelector(".popup__image");
 
-export function createCardElement(data, onDelete) {
+export function createCardElement(data, onDelete, onLike) {
   const cardElement = cardTemplate.cloneNode(true);
   const deleteButton = cardElement.querySelector(".card__delete-button");
+  const likeButton = cardElement.querySelector(".card__like-button");
 
   const cardImage = cardElement.querySelector(".card__image");
   if (!data.link && !data.name) {
@@ -21,6 +22,7 @@ export function createCardElement(data, onDelete) {
   }
 
   deleteButton.addEventListener("click", onDelete);
+  likeButton.addEventListener('click', onLike);
   cardImage.addEventListener('click', () => {
     openModal(modalImageWindow)
     modalImage.src = cardImage.src;
@@ -30,7 +32,11 @@ export function createCardElement(data, onDelete) {
   return cardElement;
 }
 
-export function handleDeleteCard(evt) {
-  evt.target.closest(".card").remove();
+export function handleDeleteCard(event) {
+  event.target.closest(".card").remove();
+}
+
+export function handleLikeCard(event) {
+  event.target.classList.toggle('card__like-button_is-active')
 }
 

@@ -6,12 +6,12 @@ import { openModal, closeModal, closeModalOverlay, formEditProfileElement, nameI
 export const profileTitle = document.querySelector('.profile__title');
 export const profileDescription = document.querySelector('.profile__description');
 
-const placesWrap = document.querySelector(".places__list");
+export const placesWrap = document.querySelector(".places__list");
 const profileEditButton = document.querySelector('.profile__edit-button');
 const addNewCardButton = document.querySelector('.profile__add-button');
 
 const modalWindows = document.querySelectorAll('.popup');
-const modalnewCardWindow = document.querySelector('.popup_type_new-card');
+export const modalnewCardWindow = document.querySelector('.popup_type_new-card');
 export const modalEditProfiledWindow = document.querySelector('.popup_type_edit');
 export const modalImageWindow = document.querySelector('.popup_type_image');
 

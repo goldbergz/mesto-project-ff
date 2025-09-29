@@ -9,10 +9,16 @@ export function createCardElement(data, onDelete) {
   const deleteButton = cardElement.querySelector(".card__delete-button");
 
   const cardImage = cardElement.querySelector(".card__image");
-  cardImage.src = data.link;
-  cardImage.alt = data.name;
+  if (!data.link && !data.name) {
+    cardImage.src = data[1].value;
+    cardImage.alt = data[0].value;
+    cardElement.querySelector(".card__title").textContent = data[0].value;
+  } else {
+    cardImage.src = data.link;
+    cardImage.alt = data.name;
 
-  cardElement.querySelector(".card__title").textContent = data.name;
+    cardElement.querySelector(".card__title").textContent = data.name;
+  }
 
   deleteButton.addEventListener("click", onDelete);
   cardImage.addEventListener('click', () => {

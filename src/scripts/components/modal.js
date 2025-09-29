@@ -1,8 +1,13 @@
-import { profileTitle, profileDescription, modalEditProfiledWindow } from '../../index.js';
+import { profileTitle, profileDescription, modalEditProfiledWindow, placesWrap, modalnewCardWindow } from '../../index.js';
+import { createCardElement, handleDeleteCard } from './card.js';
 
 export const formEditProfileElement = document.forms['edit-profile'];
 export const nameInput = formEditProfileElement.elements.name;
 export const jobInput = formEditProfileElement.elements.description;
+
+export const formNewCardElement = document.forms['new-place'];
+export const nameNewCardInput = formNewCardElement.elements['place-name'];
+export const linkNewCardInput = formNewCardElement.elements.link;
 
 function onEsc(event) {
   if (event.key === 'Escape') {
@@ -31,7 +36,7 @@ export function closeModalOverlay(event, modals) {
   }
 }
 
-function handleFormSubmit(event) {
+function handleEditProfileFormSubmit(event) {
   event.preventDefault();
   
   profileTitle.textContent = nameInput.value;
@@ -40,4 +45,11 @@ function handleFormSubmit(event) {
   closeModal(modalEditProfiledWindow);
 }
 
-formEditProfileElement.addEventListener('submit', handleFormSubmit);
+function handleNewCardFormSubmit(event) {
+  event.preventDefault();
+  placesWrap.prepend(createCardElement([nameNewCardInput, linkNewCardInput], handleDeleteCard));
+  closeModal(modalnewCardWindow);
+}
+
+formNewCardElement.addEventListener('submit', handleNewCardFormSubmit);
+formEditProfileElement.addEventListener('submit', handleEditProfileFormSubmit);

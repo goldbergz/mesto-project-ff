@@ -1,13 +1,5 @@
-import { profileTitle, profileDescription, modalEditProfiledWindow, placesWrap, modalnewCardWindow } from '../../index.js';
+import { profileTitle, profileDescription, modalEditProfiledWindow, placesWrap, modalnewCardWindow, nameEditProfileInput, jobEditProfileInput, nameNewCardInput, linkNewCardInput } from '../../index.js';
 import { createCardElement, handleDeleteCard, handleLikeCard } from './card.js';
-
-export const formEditProfileElement = document.forms['edit-profile'];
-export const nameInput = formEditProfileElement.elements.name;
-export const jobInput = formEditProfileElement.elements.description;
-
-export const formNewCardElement = document.forms['new-place'];
-export const nameNewCardInput = formNewCardElement.elements['place-name'];
-export const linkNewCardInput = formNewCardElement.elements.link;
 
 function onEsc(event) {
   if (event.key === 'Escape') {
@@ -36,20 +28,17 @@ export function closeModalOverlay(event, modals) {
   }
 }
 
-function handleEditProfileFormSubmit(event) {
+export function handleEditProfileFormSubmit(event) {
   event.preventDefault();
   
-  profileTitle.textContent = nameInput.value;
-  profileDescription.textContent = jobInput.value;
+  profileTitle.textContent = nameEditProfileInput.value;
+  profileDescription.textContent = jobEditProfileInput.value;
 
   closeModal(modalEditProfiledWindow);
 }
 
-function handleNewCardFormSubmit(event) {
+export function handleNewCardFormSubmit(event) {
   event.preventDefault();
   placesWrap.prepend(createCardElement([nameNewCardInput, linkNewCardInput], handleDeleteCard, handleLikeCard));
   closeModal(modalnewCardWindow);
 }
-
-formNewCardElement.addEventListener('submit', handleNewCardFormSubmit);
-formEditProfileElement.addEventListener('submit', handleEditProfileFormSubmit);

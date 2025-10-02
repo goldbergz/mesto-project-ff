@@ -46,15 +46,5 @@ formNewCardElement.addEventListener('submit', handleNewCardFormSubmit);
 formEditProfileElement.addEventListener('submit', handleEditProfileFormSubmit);
 
 initialCards.forEach((data) => {
-  const card = createCardElement(data, handleDeleteCard, handleLikeCard);
-
-  const cardImage = card.querySelector('.card__image');
-  cardImage.addEventListener('click', () => {
-    openModal(modalImageWindow);
-    const modalImage = modalImageWindow.querySelector('.popup__image');
-    modalImage.src = cardImage.src;
-    modalImage.alt = cardImage.alt;
-  });
-
-  placesWrap.append(card);
+  placesWrap.append(createCardElement(data, handleDeleteCard, handleLikeCard));
 });

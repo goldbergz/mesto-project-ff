@@ -1,7 +1,7 @@
 import { profileTitle, profileDescription, modalEditProfiledWindow, placesWrap, modalnewCardWindow, nameEditProfileInput, jobEditProfileInput, nameNewCardInput, linkNewCardInput } from '../../index.js';
 import { createCardElement, handleDeleteCard, handleLikeCard } from './card.js';
 
-function onEsc(event) {
+function closeByEsc(event) {
   if (event.key === 'Escape') {
     const modal = document.querySelector('.popup_is-opened');
     if (modal) modal.classList.remove('popup_is-opened');
@@ -11,7 +11,7 @@ function onEsc(event) {
 export function openModal(modal) {
   if (!modal) return;
   modal.classList.add('popup_is-opened');
-  document.addEventListener('keydown', onEsc);
+  document.addEventListener('keydown', closeByEsc);
 }
 
 export function closeModal(modal) {

@@ -1,10 +1,7 @@
-import { profileTitle, profileDescription, modalEditProfiledWindow, placesWrap, modalnewCardWindow, nameEditProfileInput, jobEditProfileInput, nameNewCardInput, linkNewCardInput } from '../../index.js';
-import { createCardElement, handleDeleteCard, handleLikeCard } from './card.js';
-
 function closeByEsc(event) {
   if (event.key === 'Escape') {
     const modal = document.querySelector('.popup_is-opened');
-    if (modal) modal.classList.remove('popup_is-opened');
+    if (modal) closeModal(modal);
   }
 }
 
@@ -17,28 +14,5 @@ export function openModal(modal) {
 export function closeModal(modal) {
   if (!modal) return;
   modal.classList.remove('popup_is-opened');
-
-}
-
-export function closeModalOverlay(event, modals) {
-  for (const modal of modals) {
-    if (event.target === modal) {
-      modal.classList.remove('popup_is-opened');
-    }
-  }
-}
-
-export function handleEditProfileFormSubmit(event) {
-  event.preventDefault();
-  
-  profileTitle.textContent = nameEditProfileInput.value;
-  profileDescription.textContent = jobEditProfileInput.value;
-
-  closeModal(modalEditProfiledWindow);
-}
-
-export function handleNewCardFormSubmit(event) {
-  event.preventDefault();
-  placesWrap.prepend(createCardElement([nameNewCardInput, linkNewCardInput], handleDeleteCard, handleLikeCard));
-  closeModal(modalnewCardWindow);
+  document.removeEventListener('keydown', closeByEsc);
 }

@@ -3,11 +3,13 @@ import { initialCards } from './scripts/cards.js';
 import { createCardElement, handleDeleteCard, handleLikeCard } from './scripts/components/card.js';
 import { openModal, closeModal } from './scripts/components/modal.js';
 import { enableValidation, clearValidation } from './scripts/components/validation.js';
+import { getProfileInformation, getCards } from './scripts/components/api.js';
 
 const placesWrap = document.querySelector(".places__list");
 
 const profileTitle = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
+const profileImage = document.querySelector('.profile__image');
 
 const modalnewCardWindow = document.querySelector('.popup_type_new-card');
 const modalEditProfiledWindow = document.querySelector('.popup_type_edit');
@@ -26,6 +28,7 @@ const linkNewCardInput = formNewCardElement.elements.link;
 
 const modalImage = modalImageWindow.querySelector(".popup__image");
 const modalImageCaption = modalImageWindow.querySelector(".popup__caption");
+
 
 addNewCardButton.addEventListener('click', () => {
   formNewCardElement.reset();
@@ -97,9 +100,21 @@ function handleNewCardFormSubmit(event) {
   closeModal(modalnewCardWindow);
 }
 
-initialCards.forEach((data) => {
-  placesWrap.append(createCardElement(data, handleDeleteCard, handleLikeCard, handleImageClick));
-});
+Promise.all([getProfileInformation(), getCards()])
+  .then(([userData, cards]) => {
+    profileTitle.textContent = userData.name;
+    profileDescription.textContent = userData.about;
+    profileImage.style.backgroundImage = `url(${userData.avatar})`;
+
+    const userId = userData._id;
+    const cardUserId = cards._id;
+
+    cards.forEach((data) => {
+      placesWrap.append(createCardElement(data, handleDeleteCard, handleLikeCard, handleImageClick, userId, cardUserId));
+    })
+  })
+  .catch((err) => { throw new Error('Ошибка заполнения данных:', err) });
+
 
 enableValidation({
   formSelector: '.popup__form',

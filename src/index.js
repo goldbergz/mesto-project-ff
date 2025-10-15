@@ -2,6 +2,7 @@ import './pages/index.css'
 import { initialCards } from './scripts/cards.js';
 import { createCardElement, handleDeleteCard, handleLikeCard } from './scripts/components/card.js';
 import { openModal, closeModal } from './scripts/components/modal.js';
+import { enableValidation, clearValidation } from './scripts/components/validation.js';
 
 const placesWrap = document.querySelector(".places__list");
 
@@ -26,10 +27,30 @@ const linkNewCardInput = formNewCardElement.elements.link;
 const modalImage = modalImageWindow.querySelector(".popup__image");
 const modalImageCaption = modalImageWindow.querySelector(".popup__caption");
 
-addNewCardButton.addEventListener('click', () => openModal(modalnewCardWindow));
+addNewCardButton.addEventListener('click', () => {
+  formNewCardElement.reset();
+  clearValidation(formNewCardElement, {
+    formSelector: '.popup__form',
+    inputSelector: '.popup__input',
+    submitButtonSelector: '.popup__button',
+    inactiveButtonClass: 'popup__button_disabled',
+    inputErrorClass: 'popup__input_type_error',
+    errorClass: 'popup__error_visible'
+  });
+  openModal(modalnewCardWindow);
+});
+
 editProfileButton.addEventListener('click', () => {
   nameEditProfileInput.value = profileTitle.textContent;
   jobEditProfileInput.value = profileDescription.textContent;
+  clearValidation(formEditProfileElement, {
+    formSelector: '.popup__form',
+    inputSelector: '.popup__input',
+    submitButtonSelector: '.popup__button',
+    inactiveButtonClass: 'popup__button_disabled',
+    inputErrorClass: 'popup__input_type_error',
+    errorClass: 'popup__error_visible'
+  });
   openModal(modalEditProfiledWindow);
 });
 
@@ -79,3 +100,12 @@ function handleNewCardFormSubmit(event) {
 initialCards.forEach((data) => {
   placesWrap.append(createCardElement(data, handleDeleteCard, handleLikeCard, handleImageClick));
 });
+
+enableValidation({
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+}); 

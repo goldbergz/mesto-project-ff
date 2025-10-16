@@ -40,3 +40,9 @@ export const deleteCard = (cardId) =>
   createBaseRequest(`/cards/${cardId}`, {
     method: 'DELETE'
   })
+
+export const updateProfileInformation = (profileBody) =>
+  createBaseRequest('/users/me', {
+    method: 'PATCH',
+    body: JSON.stringify(profileBody)
+  })

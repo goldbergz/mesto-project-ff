@@ -2,7 +2,7 @@ import './pages/index.css'
 import { createCardElement, handleDeleteCard, handleLikeCard } from './scripts/components/card.js';
 import { openModal, closeModal } from './scripts/components/modal.js';
 import { enableValidation, clearValidation } from './scripts/components/validation.js';
-import { getProfileInformation, getCards, createNewCard, deleteCard } from './scripts/components/api.js';
+import { getProfileInformation, getCards, createNewCard, deleteCard, updateProfileInformation } from './scripts/components/api.js';
 
 const placesWrap = document.querySelector(".places__list");
 
@@ -80,10 +80,15 @@ function handleImageClick(name, link) {
 
 function handleEditProfileFormSubmit(event) {
   event.preventDefault();
+  updateProfileInformation({
+    name: nameEditProfileInput.value,
+    about: jobEditProfileInput.value
+  })
+    .then((data) => {
+        profileTitle.textContent = data.name;
+        profileDescription.textContent = data.about;
+    })
   
-  profileTitle.textContent = nameEditProfileInput.value;
-  profileDescription.textContent = jobEditProfileInput.value;
-
   closeModal(modalEditProfiledWindow);
 }
 
@@ -130,7 +135,8 @@ Promise.all([getProfileInformation(), getCards()])
           onDelete: handleDelete,
           onLike: handleLikeCard,
           onImageClick: handleImageClick,
-          userId: currentUserId
+          userId: currentUserId,
+          likeCount: data.likes
         }));
     })
   })

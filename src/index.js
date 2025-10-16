@@ -1,9 +1,8 @@
 import './pages/index.css'
-import { initialCards } from './scripts/cards.js';
 import { createCardElement, handleDeleteCard, handleLikeCard } from './scripts/components/card.js';
 import { openModal, closeModal } from './scripts/components/modal.js';
 import { enableValidation, clearValidation } from './scripts/components/validation.js';
-import { getProfileInformation, getCards } from './scripts/components/api.js';
+import { getProfileInformation, getCards, createNewCard, deleteCard } from './scripts/components/api.js';
 
 const placesWrap = document.querySelector(".places__list");
 
@@ -29,6 +28,7 @@ const linkNewCardInput = formNewCardElement.elements.link;
 const modalImage = modalImageWindow.querySelector(".popup__image");
 const modalImageCaption = modalImageWindow.querySelector(".popup__caption");
 
+let currentUserId;
 
 addNewCardButton.addEventListener('click', () => {
   formNewCardElement.reset();
@@ -87,6 +87,12 @@ function handleEditProfileFormSubmit(event) {
   closeModal(modalEditProfiledWindow);
 }
 
+function handleDelete(cardElement, cardId) {
+  deleteCard(cardId)
+    .then(() => handleDeleteCard(cardElement))
+    .catch((err) => { throw new Error('Ошибка удаления карточки:', err) });
+}
+
 function handleNewCardFormSubmit(event) {
   event.preventDefault();
 
@@ -95,9 +101,19 @@ function handleNewCardFormSubmit(event) {
     link: linkNewCardInput.value
   }
 
-  placesWrap.prepend(createCardElement(newCard, handleDeleteCard, handleLikeCard, handleImageClick));
-  formNewCardElement.reset();
-  closeModal(modalnewCardWindow);
+  createNewCard(newCard)
+    .then((createdCard) => {
+      placesWrap.prepend(
+        createCardElement(createdCard, {
+          onDelete: handleDelete,
+          onLike: handleLikeCard,
+          onImageClick: handleImageClick,
+          userId: currentUserId
+        }));
+    formNewCardElement.reset();
+    closeModal(modalnewCardWindow);
+    })
+.catch((err) => { throw new Error('Ошибка при создании карточки:', err) });
 }
 
 Promise.all([getProfileInformation(), getCards()])
@@ -106,11 +122,16 @@ Promise.all([getProfileInformation(), getCards()])
     profileDescription.textContent = userData.about;
     profileImage.style.backgroundImage = `url(${userData.avatar})`;
 
-    const userId = userData._id;
-    const cardUserId = cards._id;
+    currentUserId = userData._id; 
 
     cards.forEach((data) => {
-      placesWrap.append(createCardElement(data, handleDeleteCard, handleLikeCard, handleImageClick, userId, cardUserId));
+      placesWrap.append(
+        createCardElement(data, {
+          onDelete: handleDelete,
+          onLike: handleLikeCard,
+          onImageClick: handleImageClick,
+          userId: currentUserId
+        }));
     })
   })
   .catch((err) => { throw new Error('Ошибка заполнения данных:', err) });

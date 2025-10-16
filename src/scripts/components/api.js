@@ -11,10 +11,10 @@ const baseRequest = {
   }
 }
 
-export const getProfileInformation = () => {
-  return fetch(`${baseRequest.baseUrl}/users/me`, {
-    method: 'GET',
-    headers: baseRequest.headers
+const createBaseRequest = (endpoint, options = {}) => {
+  return fetch(`${baseRequest.baseUrl}${endpoint}`, {
+    headers: baseRequest.headers,
+    ...options
   })
     .then((res) => {
       if (res.ok) {
@@ -23,20 +23,20 @@ export const getProfileInformation = () => {
         return Promise.reject(`Ошибка: ${res.status}`);
       }
     })
-    .catch((err) => { throw new Error('Ошибка загрузки профиля', err) })
+    .catch((err) => { throw new Error('Ошибка запроса к серверу', err) })
 }
 
-export const getCards = () => {
-  return fetch(`${baseRequest.baseUrl}/cards`, {
-    method: 'GET',
-    headers: baseRequest.headers
+export const getProfileInformation = () => createBaseRequest('/users/me')
+
+export const getCards = () => createBaseRequest('/cards')
+
+export const createNewCard = (cardBody) =>
+  createBaseRequest('/cards', {
+    method: 'POST',
+    body: JSON.stringify(cardBody)
   })
-    .then((res) => {
-      if (res.ok) {
-        return res.json()
-      } else {
-        return Promise.reject(`Ошибка: ${res.status}`);
-      }
-    })
-    .catch((err) => { throw new Error('Ошибка загрузки карточек', err) })
-}
+
+export const deleteCard = (cardId) =>
+  createBaseRequest(`/cards/${cardId}`, {
+    method: 'DELETE'
+  })

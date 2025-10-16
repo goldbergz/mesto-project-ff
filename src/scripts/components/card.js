@@ -1,19 +1,22 @@
 const cardTemplate = document.querySelector("#card-template").content.querySelector(".places__item");
 
-export function createCardElement(data, onDelete, onLike, onImageClick, userId, cardUserId) {
+export function createCardElement(data, { onDelete, onLike, onImageClick, userId }) {
   const cardElement = cardTemplate.cloneNode(true);
   const likeButton = cardElement.querySelector(".card__like-button");
   const cardTitle = cardElement.querySelector(".card__title");
   const cardImage = cardElement.querySelector(".card__image");
-
-  if (userId === cardUserId) {
-    const deleteButton = cardElement.querySelector(".card__delete-button");
-    deleteButton.addEventListener("click", () => onDelete(cardElement) );
-  }
+  const deleteButton = cardElement.querySelector(".card__delete-button");
 
   cardImage.src = data.link;
   cardImage.alt = data.name;
   cardTitle.textContent = data.name;
+
+  if (userId === data.owner._id) {
+    deleteButton.addEventListener("click", () => onDelete(cardElement, data._id));
+  } else {
+    deleteButton.remove();
+  }
+
 
   likeButton.addEventListener('click', () => onLike(likeButton));
   cardImage.addEventListener('click', () => onImageClick(data.name, data.link))

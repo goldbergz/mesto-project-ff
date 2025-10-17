@@ -105,7 +105,35 @@
       <p class="popup__caption"></p>
     </div>
   </div>
+
+  <div class="popup popup_type_delete-image">
+    <div class="popup__content">
+      <button type="button" class="popup__close"></button>
+      <h3 class="popup__title">Вы уверены?</h3>
+      <button type="button" class="button popup__button">Да</button>
+    </div>
+  </div>
 </div>
+
+  <div class="popup popup_type_edit-avatar">
+    <div class="popup__content">
+      <button type="button" class="popup__close"></button>
+      <h3 class="popup__title">Обновить аватар</h3>
+      <form class="popup__form" name="edit-avatar">
+        <input 
+        id="avatar-link-input"
+        type="url"
+        name="link"
+        class="popup__input popup__input_type_avatar"
+        placeholder="Ссылка на аватар"
+        required
+        data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы">
+        <span class="avatar-link-input-error form-input-error"></span>
+        
+        <button type="submit" class="button popup__button">Сохранить</button>
+      </form>
+    </div>
+  </div>
 
 <template id="card-template">
   <li class="places__item card">

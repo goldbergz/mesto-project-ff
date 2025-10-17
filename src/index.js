@@ -13,6 +13,8 @@ const profileImage = document.querySelector('.profile__image');
 const modalnewCardWindow = document.querySelector('.popup_type_new-card');
 const modalEditProfiledWindow = document.querySelector('.popup_type_edit');
 const modalImageWindow = document.querySelector('.popup_type_image');
+const modalEditAvatarWindow = document.querySelector('.popup_type_edit-avatar');
+const modalDeleteImageWindow = document.querySelector('.popup_type_delete-image');
 
 const editProfileButton = document.querySelector('.profile__edit-button');
 const addNewCardButton = document.querySelector('.profile__add-button');
@@ -25,10 +27,16 @@ const formNewCardElement = document.forms['new-place'];
 const nameNewCardInput = formNewCardElement.elements['place-name'];
 const linkNewCardInput = formNewCardElement.elements.link;
 
+const popupDeleteButton = modalDeleteImageWindow.querySelector('.popup__button');
+
 const modalImage = modalImageWindow.querySelector(".popup__image");
 const modalImageCaption = modalImageWindow.querySelector(".popup__caption");
 
 let currentUserId;
+let cardToDelete = null;
+let cardIdToDelete = null;
+
+profileImage.addEventListener('click', () => openModal(modalEditAvatarWindow))
 
 addNewCardButton.addEventListener('click', () => {
   formNewCardElement.reset();
@@ -70,6 +78,8 @@ popups.forEach((popup) => {
 
 formNewCardElement.addEventListener('submit', handleNewCardFormSubmit);
 formEditProfileElement.addEventListener('submit', handleEditProfileFormSubmit);
+popupDeleteButton.addEventListener('click', confirmDeleteCard);
+
 
 function handleImageClick(name, link) {
   modalImage.name = name;
@@ -93,9 +103,23 @@ function handleEditProfileFormSubmit(event) {
 }
 
 function handleDelete(cardElement, cardId) {
-  deleteCard(cardId)
-    .then(() => handleDeleteCard(cardElement))
-    .catch((err) => { throw new Error('Ошибка удаления карточки:', err) });
+  cardToDelete = cardElement;
+  cardIdToDelete = cardId;
+  openModal(modalDeleteImageWindow)
+}
+
+function confirmDeleteCard() {
+  if (!cardToDelete) return;
+  deleteCard(cardIdToDelete)
+    .then(() => {
+      handleDeleteCard(cardToDelete);
+      closeModal(modalDeleteImageWindow);
+    })
+    .catch((err) => console.error('Ошибка удаления карточки:', err))
+    .finally(() => {
+      cardToDelete = null;
+      cardIdToDelete = null;
+    })
 }
 
 function handleNewCardFormSubmit(event) {
@@ -118,7 +142,7 @@ function handleNewCardFormSubmit(event) {
     formNewCardElement.reset();
     closeModal(modalnewCardWindow);
     })
-.catch((err) => { throw new Error('Ошибка при создании карточки:', err) });
+.catch((err) => console.error('Ошибка при создании карточки:', err));
 }
 
 Promise.all([getProfileInformation(), getCards()])
@@ -140,7 +164,7 @@ Promise.all([getProfileInformation(), getCards()])
         }));
     })
   })
-  .catch((err) => { throw new Error('Ошибка заполнения данных:', err) });
+  .catch((err) => console.error('Ошибка заполнения данных:', err));
 
 
 enableValidation({

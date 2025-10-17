@@ -12,7 +12,7 @@ export function createCardElement(data, { onDelete, onLike, onImageClick, userId
   cardImage.src = data.link;
   cardImage.alt = data.name;
   cardTitle.textContent = data.name;
-  likeCounter.textContent = likeCount.length;
+  likeCounter.textContent = data.likes?.length || 0;;
 
   if (userId === data.owner._id) {
     deleteButton.addEventListener("click", () => onDelete(cardElement, data._id));

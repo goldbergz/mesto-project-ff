@@ -22,13 +22,16 @@ const addNewCardButton = document.querySelector('.profile__add-button');
 const formEditProfileElement = document.forms['edit-profile'];
 const nameEditProfileInput = formEditProfileElement.elements.name;
 const jobEditProfileInput = formEditProfileElement.elements.description;
+const buttonEditProfileElement = formEditProfileElement.querySelector('.popup__button');
 
 const formNewCardElement = document.forms['new-place'];
 const nameNewCardInput = formNewCardElement.elements['place-name'];
 const linkNewCardInput = formNewCardElement.elements.link;
+const buttonNewCardElement = formNewCardElement.querySelector('.popup__button');
 
 const formEditProfileAvatarElement = document.forms['edit-avatar'];
 const linkEditProfileAvatarInput = formEditProfileAvatarElement.elements.link;
+const buttonEditProfileAvatarElement = formEditProfileAvatarElement.querySelector('.popup__button');
 
 const popupDeleteButton = modalDeleteImageWindow.querySelector('.popup__button');
 
@@ -79,11 +82,16 @@ popups.forEach((popup) => {
   });
 });
 
-formNewCardElement.addEventListener('submit', handleNewCardFormSubmit);
-formEditProfileElement.addEventListener('submit', handleEditProfileFormSubmit);
-formEditProfileAvatarElement.addEventListener('submit', handleEditProfileAvatarFormSubmit)
+formNewCardElement.addEventListener('submit', (event) => {
+  handleNewCardFormSubmit(event, buttonNewCardElement)
+});
+formEditProfileElement.addEventListener('submit', (event) => {
+  handleEditProfileFormSubmit(event, buttonEditProfileElement)
+});
+formEditProfileAvatarElement.addEventListener('submit', (event) => {
+  handleEditProfileAvatarFormSubmit(event, buttonEditProfileAvatarElement)
+})
 popupDeleteButton.addEventListener('click', confirmDeleteCard);
-
 
 function handleImageClick(name, link) {
   modalImage.name = name;
@@ -92,8 +100,9 @@ function handleImageClick(name, link) {
   openModal(modalImageWindow);
 }
 
-function handleEditProfileAvatarFormSubmit(event) {
+function handleEditProfileAvatarFormSubmit(event, submitButton) {
   event.preventDefault();
+  renderLoading(true, submitButton)
   updateProfileAvatar({
     avatar: linkEditProfileAvatarInput.value
   })
@@ -101,13 +110,15 @@ function handleEditProfileAvatarFormSubmit(event) {
       profileImage.style.backgroundImage = `url(${data.avatar})`;
     })
     .catch((err) => console.error('Ошибка обновления аватара:', err))
+    .finally(() => renderLoading(false, submitButton))
   
   formEditProfileAvatarElement.reset();
   closeModal(modalEditAvatarWindow);
 }
 
-function handleEditProfileFormSubmit(event) {
+function handleEditProfileFormSubmit(event, submitButton) {
   event.preventDefault();
+  renderLoading(true, submitButton)
   updateProfileInformation({
     name: nameEditProfileInput.value,
     about: jobEditProfileInput.value
@@ -116,6 +127,8 @@ function handleEditProfileFormSubmit(event) {
         profileTitle.textContent = data.name;
         profileDescription.textContent = data.about;
     })
+    .catch((err) => { console.error('Ошибка обновления данных пользователя:', err) })
+    .finally(() => renderLoading(false, submitButton))
   
   closeModal(modalEditProfiledWindow);
 }
@@ -153,9 +166,9 @@ function handleLike(cardId, likeButton, likeCounter) {
     .catch((err) => console.error('Ошибка при обновлении лайка:', err));
 }
 
-function handleNewCardFormSubmit(event) {
+function handleNewCardFormSubmit(event, submitButton) {
   event.preventDefault();
-
+  renderLoading(true, submitButton);
   const newCard = {
     name: nameNewCardInput.value,
     link: linkNewCardInput.value
@@ -170,10 +183,12 @@ function handleNewCardFormSubmit(event) {
           onImageClick: handleImageClick,
           userId: currentUserId
         }));
-    formNewCardElement.reset();
-    closeModal(modalnewCardWindow);
     })
-.catch((err) => console.error('Ошибка при создании карточки:', err));
+    .catch((err) => console.error('Ошибка при создании карточки:', err))
+    .finally(() => renderLoading(false, submitButton))
+  
+  formNewCardElement.reset();
+  closeModal(modalnewCardWindow);
 }
 
 Promise.all([getProfileInformation(), getCards()])
@@ -196,6 +211,13 @@ Promise.all([getProfileInformation(), getCards()])
   })
   .catch((err) => console.error('Ошибка заполнения данных:', err));
 
+function renderLoading(isLoading, submitButton) {
+  if (isLoading) {
+    submitButton.textContent = 'Сохранение...'
+  } else {
+    submitButton.textContent = 'Сохранить'
+  }
+}
 
 enableValidation({
   formSelector: '.popup__form',

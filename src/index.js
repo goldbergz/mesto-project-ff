@@ -2,7 +2,7 @@ import './pages/index.css'
 import { createCardElement, handleDeleteCard, handleLikeCard } from './scripts/components/card.js';
 import { openModal, closeModal } from './scripts/components/modal.js';
 import { enableValidation, clearValidation } from './scripts/components/validation.js';
-import { getProfileInformation, getCards, createNewCard, deleteCard, updateProfileInformation } from './scripts/components/api.js';
+import { getProfileInformation, getCards, createNewCard, deleteCard, updateProfileInformation, likeCard, unlikeCard, updateProfileAvatar } from './scripts/components/api.js';
 
 const placesWrap = document.querySelector(".places__list");
 
@@ -26,6 +26,9 @@ const jobEditProfileInput = formEditProfileElement.elements.description;
 const formNewCardElement = document.forms['new-place'];
 const nameNewCardInput = formNewCardElement.elements['place-name'];
 const linkNewCardInput = formNewCardElement.elements.link;
+
+const formEditProfileAvatarElement = document.forms['edit-avatar'];
+const linkEditProfileAvatarInput = formEditProfileAvatarElement.elements.link;
 
 const popupDeleteButton = modalDeleteImageWindow.querySelector('.popup__button');
 
@@ -78,6 +81,7 @@ popups.forEach((popup) => {
 
 formNewCardElement.addEventListener('submit', handleNewCardFormSubmit);
 formEditProfileElement.addEventListener('submit', handleEditProfileFormSubmit);
+formEditProfileAvatarElement.addEventListener('submit', handleEditProfileAvatarFormSubmit)
 popupDeleteButton.addEventListener('click', confirmDeleteCard);
 
 
@@ -86,6 +90,20 @@ function handleImageClick(name, link) {
   modalImage.src = link;
   modalImageCaption.textContent = name;
   openModal(modalImageWindow);
+}
+
+function handleEditProfileAvatarFormSubmit(event) {
+  event.preventDefault();
+  updateProfileAvatar({
+    avatar: linkEditProfileAvatarInput.value
+  })
+    .then((data) => {
+      profileImage.style.backgroundImage = `url(${data.avatar})`;
+    })
+    .catch((err) => console.error('Ошибка обновления аватара:', err))
+  
+  formEditProfileAvatarElement.reset();
+  closeModal(modalEditAvatarWindow);
 }
 
 function handleEditProfileFormSubmit(event) {
@@ -122,6 +140,19 @@ function confirmDeleteCard() {
     })
 }
 
+function handleLike(cardId, likeButton, likeCounter) {
+
+  const isLiked = likeButton.classList.contains('card__like-button_is-active');
+  const likeAction = isLiked ? unlikeCard(cardId) : likeCard(cardId);
+
+  likeAction
+    .then((updatedCard) => {
+      likeButton.classList.toggle('card__like-button_is-active', !isLiked);
+      likeCounter.textContent = updatedCard.likes.length;
+    })
+    .catch((err) => console.error('Ошибка при обновлении лайка:', err));
+}
+
 function handleNewCardFormSubmit(event) {
   event.preventDefault();
 
@@ -135,7 +166,7 @@ function handleNewCardFormSubmit(event) {
       placesWrap.prepend(
         createCardElement(createdCard, {
           onDelete: handleDelete,
-          onLike: handleLikeCard,
+          onLike: handleLike,
           onImageClick: handleImageClick,
           userId: currentUserId
         }));
@@ -157,10 +188,9 @@ Promise.all([getProfileInformation(), getCards()])
       placesWrap.append(
         createCardElement(data, {
           onDelete: handleDelete,
-          onLike: handleLikeCard,
+          onLike: handleLike,
           onImageClick: handleImageClick,
-          userId: currentUserId,
-          likeCount: data.likes
+          userId: currentUserId
         }));
     })
   })

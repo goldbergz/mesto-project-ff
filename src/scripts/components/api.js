@@ -46,3 +46,21 @@ export const updateProfileInformation = (profileBody) =>
     method: 'PATCH',
     body: JSON.stringify(profileBody)
   })
+
+export const updateProfileAvatar = (profileBody) =>
+  createBaseRequest('/users/me/avatar', {
+    method: 'PATCH',
+    body: JSON.stringify(profileBody)
+  })
+
+export const likeCard = (cardId) => {
+  return createBaseRequest(`/cards/likes/${cardId}`, {
+    method: 'PUT'
+  })
+}
+
+export const unlikeCard = (cardId) => {
+  return createBaseRequest(`/cards/likes/${cardId}`, {
+    method: 'DELETE'
+  })
+}

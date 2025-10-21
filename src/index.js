@@ -1,5 +1,5 @@
 import './pages/index.css'
-import { createCardElement, handleDeleteCard, handleLikeCard } from './scripts/components/card.js';
+import { createCardElement, handleDeleteCard } from './scripts/components/card.js';
 import { openModal, closeModal } from './scripts/components/modal.js';
 import { enableValidation, clearValidation } from './scripts/components/validation.js';
 import { getProfileInformation, getCards, createNewCard, deleteCard, updateProfileInformation, likeCard, unlikeCard, updateProfileAvatar } from './scripts/components/api.js';
@@ -42,7 +42,7 @@ let currentUserId;
 let cardToDelete = null;
 let cardIdToDelete = null;
 
-profileImage.addEventListener('click', () => openModal(modalEditAvatarWindow))
+profileImage.addEventListener('click', () => openModal(modalEditAvatarWindow));
 
 addNewCardButton.addEventListener('click', () => {
   formNewCardElement.reset();
@@ -90,7 +90,7 @@ formEditProfileElement.addEventListener('submit', (event) => {
 });
 formEditProfileAvatarElement.addEventListener('submit', (event) => {
   handleEditProfileAvatarFormSubmit(event, buttonEditProfileAvatarElement)
-})
+});
 popupDeleteButton.addEventListener('click', confirmDeleteCard);
 
 function handleImageClick(name, link) {
@@ -107,7 +107,7 @@ function handleEditProfileAvatarFormSubmit(event, submitButton) {
     avatar: linkEditProfileAvatarInput.value
   })
     .then((data) => {
-      profileImage.style.backgroundImage = `url(${data.avatar})`;
+      profileImage.style.backgroundImage = `url(${data.avatar})`
     })
     .catch((err) => console.error('Ошибка обновления аватара:', err))
     .finally(() => renderLoading(false, submitButton))
@@ -118,7 +118,7 @@ function handleEditProfileAvatarFormSubmit(event, submitButton) {
 
 function handleEditProfileFormSubmit(event, submitButton) {
   event.preventDefault();
-  renderLoading(true, submitButton)
+  renderLoading(true, submitButton);
   updateProfileInformation({
     name: nameEditProfileInput.value,
     about: jobEditProfileInput.value
@@ -136,7 +136,7 @@ function handleEditProfileFormSubmit(event, submitButton) {
 function handleDelete(cardElement, cardId) {
   cardToDelete = cardElement;
   cardIdToDelete = cardId;
-  openModal(modalDeleteImageWindow)
+  openModal(modalDeleteImageWindow);
 }
 
 function confirmDeleteCard() {

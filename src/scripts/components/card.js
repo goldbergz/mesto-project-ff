@@ -34,7 +34,3 @@ export function handleDeleteCard(cardElement) {
   cardElement.remove();
 }
 
-export function handleLikeCard(likeButton) {
-  likeButton.classList.toggle('card__like-button_is-active');
-}
-

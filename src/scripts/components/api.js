@@ -3,8 +3,10 @@ const environments = {
   group_id: 'higher-front-back-dev'
 }
 
+const serverUrl = 'https://nomoreparties.co/v1/';
+
 const baseRequest = {
-  baseUrl: `https://nomoreparties.co/v1/${environments.group_id}`,
+  baseUrl: `${serverUrl}${environments.group_id}`,
   headers: {
     authorization: `${environments.token}`,
     'Content-Type': 'application/json'

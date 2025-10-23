@@ -2,7 +2,7 @@ import './pages/index.css'
 import { createCardElement, handleDeleteCard } from './scripts/components/card.js';
 import { openModal, closeModal } from './scripts/components/modal.js';
 import { enableValidation, clearValidation } from './scripts/components/validation.js';
-import { getProfileInformation, getCards, createNewCard, deleteCard, updateProfileInformation, likeCard, unlikeCard, updateProfileAvatar } from './scripts/components/api.js';
+import { getProfileInformation, getCards, createNewCard, deleteCard, updateProfileInformation, updateProfileAvatar } from './scripts/components/api.js';
 
 const placesWrap = document.querySelector(".places__list");
 
@@ -42,32 +42,27 @@ let currentUserId;
 let cardToDelete = null;
 let cardIdToDelete = null;
 
+const clearValidationObject = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+}
+
 profileImage.addEventListener('click', () => openModal(modalEditAvatarWindow));
 
 addNewCardButton.addEventListener('click', () => {
   formNewCardElement.reset();
-  clearValidation(formNewCardElement, {
-    formSelector: '.popup__form',
-    inputSelector: '.popup__input',
-    submitButtonSelector: '.popup__button',
-    inactiveButtonClass: 'popup__button_disabled',
-    inputErrorClass: 'popup__input_type_error',
-    errorClass: 'popup__error_visible'
-  });
+  clearValidation(formNewCardElement, clearValidationObject);
   openModal(modalnewCardWindow);
 });
 
 editProfileButton.addEventListener('click', () => {
   nameEditProfileInput.value = profileTitle.textContent;
   jobEditProfileInput.value = profileDescription.textContent;
-  clearValidation(formEditProfileElement, {
-    formSelector: '.popup__form',
-    inputSelector: '.popup__input',
-    submitButtonSelector: '.popup__button',
-    inactiveButtonClass: 'popup__button_disabled',
-    inputErrorClass: 'popup__input_type_error',
-    errorClass: 'popup__error_visible'
-  });
+  clearValidation(formEditProfileElement, clearValidationObject);
   openModal(modalEditProfiledWindow);
 });
 
@@ -107,13 +102,13 @@ function handleEditProfileAvatarFormSubmit(event, submitButton) {
     avatar: linkEditProfileAvatarInput.value
   })
     .then((data) => {
-      profileImage.style.backgroundImage = `url(${data.avatar})`
+      profileImage.style.backgroundImage = `url(${data.avatar})`;
+      formEditProfileAvatarElement.reset();
+      clearValidation(formEditProfileAvatarElement, clearValidationObject);
+      closeModal(modalEditAvatarWindow);
     })
     .catch((err) => console.error('Ошибка обновления аватара:', err))
     .finally(() => renderLoading(false, submitButton))
-  
-  formEditProfileAvatarElement.reset();
-  closeModal(modalEditAvatarWindow);
 }
 
 function handleEditProfileFormSubmit(event, submitButton) {
@@ -124,13 +119,13 @@ function handleEditProfileFormSubmit(event, submitButton) {
     about: jobEditProfileInput.value
   })
     .then((data) => {
-        profileTitle.textContent = data.name;
-        profileDescription.textContent = data.about;
+      profileTitle.textContent = data.name;
+      profileDescription.textContent = data.about;
+      clearValidation(formEditProfileElement, clearValidationObject);
+      closeModal(modalEditProfiledWindow);
     })
     .catch((err) => { console.error('Ошибка обновления данных пользователя:', err) })
     .finally(() => renderLoading(false, submitButton))
-  
-  closeModal(modalEditProfiledWindow);
 }
 
 function handleDelete(cardElement, cardId) {
@@ -153,19 +148,6 @@ function confirmDeleteCard() {
     })
 }
 
-function handleLike(cardId, likeButton, likeCounter) {
-
-  const isLiked = likeButton.classList.contains('card__like-button_is-active');
-  const likeAction = isLiked ? unlikeCard(cardId) : likeCard(cardId);
-
-  likeAction
-    .then((updatedCard) => {
-      likeButton.classList.toggle('card__like-button_is-active', !isLiked);
-      likeCounter.textContent = updatedCard.likes.length;
-    })
-    .catch((err) => console.error('Ошибка при обновлении лайка:', err));
-}
-
 function handleNewCardFormSubmit(event, submitButton) {
   event.preventDefault();
   renderLoading(true, submitButton);
@@ -179,16 +161,15 @@ function handleNewCardFormSubmit(event, submitButton) {
       placesWrap.prepend(
         createCardElement(createdCard, {
           onDelete: handleDelete,
-          onLike: handleLike,
           onImageClick: handleImageClick,
           userId: currentUserId
         }));
+      formNewCardElement.reset();
+      clearValidation(formNewCardElement, clearValidationObject);
+      closeModal(modalnewCardWindow);
     })
     .catch((err) => console.error('Ошибка при создании карточки:', err))
     .finally(() => renderLoading(false, submitButton))
-  
-  formNewCardElement.reset();
-  closeModal(modalnewCardWindow);
 }
 
 Promise.all([getProfileInformation(), getCards()])
@@ -203,7 +184,6 @@ Promise.all([getProfileInformation(), getCards()])
       placesWrap.append(
         createCardElement(data, {
           onDelete: handleDelete,
-          onLike: handleLike,
           onImageClick: handleImageClick,
           userId: currentUserId
         }));
@@ -219,11 +199,4 @@ function renderLoading(isLoading, submitButton) {
   }
 }
 
-enableValidation({
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__button_disabled',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__error_visible'
-}); 
+enableValidation(clearValidationObject); 

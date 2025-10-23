@@ -1,3 +1,5 @@
+import { likeCard, unlikeCard } from './api.js';
+
 const cardTemplate = document.querySelector("#card-template").content.querySelector(".places__item");
 
 export function createCardElement(data, { onDelete, onLike, onImageClick, userId }) {
@@ -24,7 +26,7 @@ export function createCardElement(data, { onDelete, onLike, onImageClick, userId
     likeButton.classList.add('card__like-button_is-active');
   }
 
-  likeButton.addEventListener('click', () => onLike(data._id, likeButton, likeCounter));
+  likeButton.addEventListener('click', () => toggleCardLike(data._id, likeButton, likeCounter));
   cardImage.addEventListener('click', () => onImageClick(data.name, data.link))
 
   return cardElement;
@@ -34,3 +36,14 @@ export function handleDeleteCard(cardElement) {
   cardElement.remove();
 }
 
+function toggleCardLike(cardId, likeButton, likeCounter) {
+  const isLiked = likeButton.classList.contains('card__like-button_is-active');
+  const likeAction = isLiked ? unlikeCard(cardId) : likeCard(cardId);
+
+  likeAction
+    .then((updatedCard) => {
+      likeButton.classList.toggle('card__like-button_is-active', !isLiked);
+      likeCounter.textContent = updatedCard.likes.length;
+    })
+    .catch((err) => console.error('Ошибка при обновлении лайка:', err));
+}
